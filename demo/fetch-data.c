@@ -7,7 +7,7 @@ main (int   argc,
       char *argv[])
 {
     mongoc_client_t *client;
-    mongoc_collection_t *collection;
+    mongoc_collection_t *sales_collection;
     mongoc_cursor_t *cursor;
     const bson_t *doc;
     bson_t *query;
@@ -24,12 +24,11 @@ main (int   argc,
     double cost_sum_double = 0;
     _Decimal128 cost_sum_decimal = 0;
     while (mongoc_cursor_next (cursor, &doc)) {
-        //str = bson_as_json (doc, NULL);
-	bson_iter_init(&iter, doc);
-	bson_iter_find(&iter, "cost_double");
-	cost_sum_double += bson_iter_double(&iter);
-	bson_iter_find(&iter, "cost_decimal");
-	cost_sum_decimal += bson_iterdouble(&iter);
+        bson_iter_init(&iter, doc);
+        bson_iter_find(&iter, "cost_double");
+        cost_sum_double += bson_iter_double(&iter);
+        bson_iter_find(&iter, "cost_decimal");
+        cost_sum_decimal += bson_iter_decimal128(&iter);
     }
 
     printf("Cost sum (double): %f", cost_sum_double);
@@ -37,7 +36,7 @@ main (int   argc,
 
     bson_destroy (query);
     mongoc_cursor_destroy (cursor);
-    mongoc_collection_destroy (collection);
+    mongoc_collection_destroy (sales_collection);
     mongoc_client_destroy (client);
 
     return 0;
