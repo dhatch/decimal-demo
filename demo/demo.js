@@ -1,17 +1,60 @@
-// Update all of our sales to include tax
-db.sales.update({}, {$mul: {cost_double : 1.05}})
-db.sales.update({}, {$mul: {cost_decimal : NumberDecimal("1.05")}})
-db.sales.find()
-(db.sales.findOne()).cost_double.toFixed(2)
-(db.sales.findOne()).cost_decimal
+// Example 1 - Exact addition/accumulation
 
-// We owe this amount of money
-untaxed_revenue_double = db.revenue.findOne().total_revenue_double
-untaxed_revenue_decimal = db.revenue.findOne().total_revenue_decimal
+db.numbers.drop();
+db.numbers.insert({a: 0.1, b: NumberDecimal("0.1")});
 
-db.revenue.update({}, {$mul: {total_revenue_double : 1.05}})
-db.revenue.update({}, {$mul: {total_revenue_decimal : NumberDecimal("1.05")}})
+db.numbers.update({}, {$inc: {a: 0.1}}, {multi: 1});
+db.numbers.update({}, {$inc: {a: 0.1}}, {multi: 1});
+db.numbers.update({}, {$inc: {b: NumberDecimal("0.1")}}, {multi: 1});
+db.numbers.update({}, {$inc: {b: NumberDecimal("0.1")}}, {multi: 1});
 
-taxed_revenue_double = db.revenue.findOne().total_revenue_double
-taxed_revenue_decimal = db.revenue.findOne().total_revenue_decimal
+db.numbers.find();
+db.numbers.find({a: 0.3});
+db.numbers.find({b: NumberDecimal("0.3")});
 
+// Example 2 -- We can store trailing zeros
+
+db.numbers.drop();
+db.numbers.insert({a: NumberDecimal("5.0")});
+db.numbers.insert({a: NumberDecimal("5.00")});
+
+db.numbers.find({a: NumberDecimal("5")});
+
+// Example 3 -- We can query with other types and compare well
+
+db.numbers.find({a: 5});
+db.numbers.find({a: 5.0});
+db.numbers.find({a: NumberLong("5")});
+
+// Example 3 -- Cross type equality
+
+db.numbers.insert({a: 5)});
+db.numbers.insert({a: 5.0});
+db.numbers.insert({a: NumberLong("5")});
+
+db.numbers.find({a: 5});
+
+// Example 4 -- Multiplication
+
+db.numbers.drop();
+db.numbers.insert({a: NumberDecimal("10.1")});
+db.numbers.update({}, {$mul: {a: NumberDecimal("10.1")}});
+db.numbers.find();
+
+// Example 5 -- Mixed Operations
+
+db.numbers.update({}, {$mul: {a: NumberLong("1000000000000")}});
+
+
+db.numbers.drop();
+db.numbers.insert({a: NumberDecimal("10.1")});
+db.numbers.update({}, {$mul: {a: NumberDecimal("10.1")}});
+db.numbers.find();
+
+db.numbers.update({}, {$mul: {a: NumberDecimal("1E12")}});
+
+
+// C driver can round trip
+db.sales.findOne();
+
+db.sales.update({}, {$mul: {cost_decimal : NumberDecimal("1.05")}}, {multi: 1});
