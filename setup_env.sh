@@ -16,7 +16,7 @@ cd $ORIG_DIR
 echo "Testing"
 
 # one failure expected
-cd mongo && scons -j4 unittests; cd $ORIG_DIR
+cd mongo && scons -j4 unittests && ./build/resmoke.py --suites=unittests --continueOnFailure; cd $ORIG_DIR
 
 mkdir -p test/tmp/data
 ./mongo/mongod --dbpath test/tmp/data 2>&1 >/dev/null &

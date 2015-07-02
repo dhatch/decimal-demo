@@ -1,1 +1,4 @@
 demo/.libs/*
+demo/*.o
+demo/fetch-data
+demo/double-load-data
