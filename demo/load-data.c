@@ -4,7 +4,7 @@
 #include <bson.h>
 #include <mongoc.h>
 
-#define RECORD_COUNT 1000
+#define RECORD_COUNT 100000
 
 /*
  * This C program loads %RECORD_COUNT transactions into the connected database,
@@ -94,8 +94,8 @@ main (int argc,
     mongoc_init ();
 
     client = mongoc_client_new ("mongodb://localhost/");
-    sales = mongoc_client_get_collection(client, "demo", "sales");
-    revenue = mongoc_client_get_collection(client, "demo", "revenue");
+    sales = mongoc_client_get_collection(client, "test", "sales");
+    revenue = mongoc_client_get_collection(client, "test", "revenue");
 
     perform_insert (sales, revenue);
 

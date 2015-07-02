@@ -1,13 +1,13 @@
 CC=gcc-5
-CFLAGS=-I../mongo-c-driver/src/mongoc -I../mongo-c-driver/src/libbson/src/bson
+override CFLAGS+=-I../mongo-c-driver/src/mongoc -I../mongo-c-driver/src/libbson/src/bson
 
 EXECUTABLES=\
-						double-load-data\
+						load-data\
 						fetch-data
 
-all: double-load-data fetch-data
+all: load-data fetch-data
 
-double-load-data: double-load-data.o
+load-data: load-data.o
 	../mongo-c-driver/libtool --mode=link $(CC) $(CFLAGS) -o $@ ../mongo-c-driver/libmongoc-1.0.la $^
 
 fetch-data: fetch-data.o
